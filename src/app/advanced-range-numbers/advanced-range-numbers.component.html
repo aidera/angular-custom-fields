@@ -1,0 +1,135 @@
+<div
+  [matMenuTriggerFor]="menu"
+  class="control"
+  [ngClass]="{ disabled: disabled, focused: focused, hasError: errorState }"
+  #control
+  #menuTrigger="matMenuTrigger"
+>
+  <ng-container *ngIf="form">
+    <div class="display-container">
+      <div class="chips-list">
+        <mat-chip-list *ngIf="form.value && !empty">
+          <ng-container
+            *ngIf="form.value.min !== null && form.value.max === null"
+          >
+            <span>{{ labelMin }}</span>
+
+            <mat-chip
+              class="chip"
+              [disabled]="disabled"
+              [disableRipple]="true"
+              >{{ form.value.min }}</mat-chip
+            >
+          </ng-container>
+          <ng-container
+            *ngIf="form.value.min === null && form.value.max !== null"
+          >
+            <span>{{ labelMax }}</span>
+
+            <mat-chip
+              class="chip"
+              [disabled]="disabled"
+              [disableRipple]="true"
+              >{{ form.value.max }}</mat-chip
+            >
+          </ng-container>
+          <ng-container
+            *ngIf="form.value.min !== null && form.value.max !== null"
+          >
+            <span>{{ labelMin }}</span>
+            <mat-chip
+              class="chip"
+              [disabled]="disabled"
+              [disableRipple]="true"
+              >{{ form.value.min }}</mat-chip
+            >
+            <span>{{ labelMax }}</span>
+            <mat-chip
+              class="chip"
+              [disabled]="disabled"
+              [disableRipple]="true"
+              >{{ form.value.max }}</mat-chip
+            >
+          </ng-container>
+        </mat-chip-list>
+      </div>
+
+      <div class="clear-button-container">
+        <span *ngIf="!empty">
+          <button
+            [disabled]="disabled"
+            mat-icon-button
+            (click)="clearValue($event)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </span>
+      </div>
+
+      <div class="select-container">
+        <button mat-icon-button [disableRipple]="true" [disabled]="disabled">
+          <mat-icon [color]="focused ? 'primary' : undefined">
+            arrow_drop_down
+          </mat-icon>
+        </button>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<mat-menu
+  #menu="matMenu"
+  class="container-full-width-menu"
+  multiple
+  (closed)="onDropdownClose()"
+>
+  <div
+    (click)="preventDefault($event)"
+    class="menu-content"
+    [ngStyle]="{ width: dropdownWidth + 'px', maxWidth: '100%' }"
+    *ngIf="form"
+  >
+    <div
+      class="range-field"
+      [ngClass]="{
+        'min-slider-disable': form.value.min === null,
+        'max-slider-disable': form.value.max === null
+      }"
+    >
+      <ngx-slider
+        [(value)]="slideValueMin"
+        [(highValue)]="slideValueMax"
+        [options]="sliderOptions"
+        [manualRefresh]="manualRefresh"
+        (userChange)="sliderValueChangeHandler($event)"
+      ></ngx-slider>
+    </div>
+
+    <div class="number-fields">
+      <mat-form-field class="field" appearance="standard">
+        <mat-label>{{ labelMin }}</mat-label>
+        <input matInput [formControl]="form.get('min')" type="number" />
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="clearFieldValue($event, 'min')"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field class="field" appearance="standard">
+        <mat-label>{{ labelMax }}</mat-label>
+        <input matInput [formControl]="form.get('max')" type="number" />
+
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="clearFieldValue($event, 'max')"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+  </div>
+</mat-menu>

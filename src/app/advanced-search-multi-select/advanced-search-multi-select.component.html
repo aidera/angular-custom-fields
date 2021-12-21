@@ -1,0 +1,122 @@
+<div
+  [matMenuTriggerFor]="menu"
+  class="control"
+  [ngClass]="{ disabled: disabled, focused: focused, hasError: errorState }"
+  #control
+  #menuTrigger="matMenuTrigger"
+>
+  <div class="display-container">
+    <div class="chips-list">
+      <div class="chip-list-inner-container" #chipListInnerContainer>
+        <mat-chip-list #chipList *ngIf="value && value.length">
+          <mat-chip
+            *ngFor="let selectedElement of value"
+            (removed)="removeSelected(selectedElement)"
+            [disabled]="disabled"
+            [disableRipple]="true"
+            class="chip"
+          >
+            <span class="chip-text">
+              {{ getDisplayValue(selectedElement) }}</span
+            >
+            <div matChipRemove>
+              <mat-icon class="chip-icon">cancel</mat-icon>
+            </div>
+          </mat-chip>
+        </mat-chip-list>
+      </div>
+    </div>
+
+    <div class="other">
+      <span
+        *ngIf="value && value.length && chipListHeight > defaultChipListHeight"
+        >...</span
+      >
+    </div>
+
+    <div class="count">
+      <span *ngIf="value && value.length">{{ value.length }}</span>
+    </div>
+
+    <div class="clear-button-container">
+      <span *ngIf="value && value.length">
+        <button
+          [disabled]="disabled"
+          mat-icon-button
+          (click)="clearValue($event)"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </span>
+    </div>
+
+    <div class="select-container">
+      <mat-icon> arrow_drop_down </mat-icon>
+    </div>
+  </div>
+</div>
+
+<mat-menu
+  #menu="matMenu"
+  class="container-full-width-menu"
+  multiple
+  (closed)="onDropdownClose()"
+>
+  <div
+    (click)="preventDefault($event)"
+    [ngStyle]="{ width: dropdownWidth + 'px', maxWidth: '100%' }"
+    *ngIf="searchControl"
+  >
+    <div class="search-container">
+      <mat-form-field appearance="standard">
+        <mat-label>Search</mat-label>
+        <mat-icon matPrefix class="search-field-icon">search</mat-icon>
+        <input matInput [formControl]="searchControl" />
+      </mat-form-field>
+    </div>
+
+    <div class="options-container">
+      <ng-container *ngIf="!searchControl.value">
+        <ng-container>
+          <div mat-menu-item (click)="toggleAll($event)">
+            <mat-checkbox
+              [disableRipple]="true"
+              [checked]="value.length === options.length"
+              color="primary"
+              >All</mat-checkbox
+            >
+          </div>
+          <mat-divider></mat-divider>
+        </ng-container>
+
+        <ng-container *ngIf="selectedOptions.length">
+          <div
+            *ngFor="let option of selectedOptions"
+            mat-menu-item
+            (click)="selectOption($event, option.keyValue)"
+          >
+            <mat-checkbox
+              [disableRipple]="true"
+              [checked]="true"
+              color="primary"
+              >{{ option.viewValue }}</mat-checkbox
+            >
+          </div>
+          <mat-divider></mat-divider>
+        </ng-container>
+      </ng-container>
+      <div
+        *ngFor="let option of filteredOptions"
+        mat-menu-item
+        (click)="selectOption($event, option.keyValue)"
+      >
+        <mat-checkbox
+          [disableRipple]="true"
+          [checked]="checkIsChecked(option.keyValue)"
+          color="primary"
+          >{{ option.viewValue }}</mat-checkbox
+        >
+      </div>
+    </div>
+  </div>
+</mat-menu>
